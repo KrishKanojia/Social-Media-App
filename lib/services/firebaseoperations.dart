@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/screens/landingpage/landingutils.dart';
+import 'package:social_media_app/services/authentication.dart';
 
 class FirebaseOperation extends ChangeNotifier {
   late UploadTask ImageUploadTask;
@@ -23,5 +25,12 @@ class FirebaseOperation extends ChangeNotifier {
           "The User Profile Image => ${Provider.of<LandingUtils>(context, listen: false).UserImageUrl.toString()}");
       notifyListeners();
     });
+  }
+
+  Future createUserCollection(BuildContext context, dynamic data) async {
+    return FirebaseFirestore.instance
+        .collection("allusers")
+        .doc(Provider.of<Authentication>(context, listen: false).getUserId)
+        .set(data);
   }
 }

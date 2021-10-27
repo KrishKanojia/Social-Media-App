@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:social_media_app/constraints.dart';
 import 'package:social_media_app/screens/homepage/homepage.dart';
 import 'package:social_media_app/screens/landingpage/landingservices.dart';
+import 'package:social_media_app/screens/landingpage/landingutils.dart';
 import 'package:social_media_app/services/authentication.dart';
 
 class LandingHelpers extends ChangeNotifier {
@@ -78,53 +79,55 @@ class LandingHelpers extends ChangeNotifier {
                 topLeft: Radius.circular(15),
                 topRight: Radius.circular(15),
               )),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 150.0),
-                child: Divider(
-                  thickness: 4.0,
-                  color: constantColors.whiteColor,
+          child: Form(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                  child: Divider(
+                    thickness: 4.0,
+                    color: constantColors.whiteColor,
+                  ),
                 ),
-              ),
-              Provider.of<LandingServices>(context, listen: false)
-                  .passwordlessSignIn(context),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  MaterialButton(
-                    color: constantColors.redColor,
-                    child: Text(
-                      "Log In",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: constantColors.whiteColor,
-                        fontWeight: FontWeight.bold,
+                Provider.of<LandingServices>(context, listen: false)
+                    .passwordlessSignIn(context),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    MaterialButton(
+                      color: constantColors.redColor,
+                      child: Text(
+                        "Log In",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: constantColors.whiteColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                      onPressed: () {
+                        Provider.of<LandingServices>(context, listen: false)
+                            .loginSheet(context);
+                      },
                     ),
-                    onPressed: () {
-                      Provider.of<LandingServices>(context, listen: false)
-                          .signInSheet(context);
-                    },
-                  ),
-                  MaterialButton(
-                    color: constantColors.blueColor,
-                    child: Text(
-                      "Sign In",
-                      style: TextStyle(
-                        fontSize: 18,
-                        color: constantColors.whiteColor,
-                        fontWeight: FontWeight.bold,
+                    MaterialButton(
+                      color: constantColors.blueColor,
+                      child: Text(
+                        "Sign In",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: constantColors.whiteColor,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                      onPressed: () {
+                        Provider.of<LandingUtils>(context, listen: false)
+                            .showImageOption(context);
+                      },
                     ),
-                    onPressed: () {
-                      Provider.of<LandingServices>(context, listen: false)
-                          .signUpSheet(context);
-                    },
-                  ),
-                ],
-              )
-            ],
+                  ],
+                )
+              ],
+            ),
           ),
         );
       },

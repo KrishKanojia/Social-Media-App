@@ -14,16 +14,18 @@ class LandingPage extends StatefulWidget {
   _LandingPageState createState() => _LandingPageState();
 }
 
-late LandingHelpers helpers;
+late LandingHelpers _landingHelpers;
 
 class _LandingPageState extends State<LandingPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
     var height = MediaQuery.of(context).size.height;
     ConstantColors constantColors = ConstantColors();
 
-    helpers = Provider.of<LandingHelpers>(context, listen: false);
+    _landingHelpers = Provider.of<LandingHelpers>(context, listen: false);
     return Container(
       // color: kContentColorLightTheme,
       decoration: BoxDecoration(
@@ -38,6 +40,7 @@ class _LandingPageState extends State<LandingPage> {
       ),
       child: SafeArea(
         child: Scaffold(
+          key: _scaffoldKey,
           backgroundColor: Colors.transparent,
           body: Column(
             children: [
@@ -84,16 +87,16 @@ class _LandingPageState extends State<LandingPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  helpers.emailBtn(
+                  _landingHelpers.emailBtn(
                     color: Colors.yellow,
                     icon: EvaIcons.emailOutline,
                     context: context,
                   ),
-                  helpers.googleBtn(
+                  _landingHelpers.googleBtn(
                       color: Colors.red,
                       icon: EvaIcons.google,
                       context: context),
-                  helpers.googleBtn(
+                  _landingHelpers.googleBtn(
                       color: Colors.blue,
                       icon: FontAwesomeIcons.facebookF,
                       context: context),
