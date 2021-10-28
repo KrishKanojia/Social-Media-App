@@ -9,6 +9,7 @@ import 'package:social_media_app/services/authentication.dart';
 
 class FirebaseOperation extends ChangeNotifier {
   late UploadTask ImageUploadTask;
+  late String initUserEmail, initUserName, initUserImage;
 
   Future uploadUserImage(BuildContext context) async {
     Reference imageReference = FirebaseStorage.instance.ref().child(
@@ -32,5 +33,22 @@ class FirebaseOperation extends ChangeNotifier {
         .collection("allusers")
         .doc(Provider.of<Authentication>(context, listen: false).getUserId)
         .set(data);
+  }
+
+  Future initUserData<DocumentSnapshot>(BuildContext context) async {
+    return await FirebaseFirestore.instance
+        .collection("allusers")
+        .doc(Provider.of<Authentication>(context, listen: false).getUserId)
+        .get()
+        .then((doc) async {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+      print("Fetching User Data ");
+      initUserName = data['username'];
+      initUserEmail = data['useremail'];
+      initUserImage = data['userimage'];
+      print(initUserName);
+      print(initUserImage);
+      notifyListeners();
+    });
   }
 }

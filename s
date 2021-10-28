@@ -1,0 +1,239 @@
+[1mdiff --git a/lib/main.dart b/lib/main.dart[m
+[1mindex 58ac5f7..57a39ee 100644[m
+[1m--- a/lib/main.dart[m
+[1m+++ b/lib/main.dart[m
+[36m@@ -2,6 +2,7 @@[m [mimport 'package:firebase_core/firebase_core.dart';[m
+ import 'package:flutter/material.dart';[m
+ import 'package:flutter/services.dart';[m
+ import 'package:provider/provider.dart';[m
+[32m+[m[32mimport 'package:social_media_app/screens/homepage/homepagehelpers.dart';[m
+ import 'package:social_media_app/screens/landingpage/landinghelpers.dart';[m
+ import 'package:social_media_app/screens/landingpage/landingpage.dart';[m
+ import 'package:social_media_app/screens/landingpage/landingservices.dart';[m
+[36m@@ -50,6 +51,9 @@[m [mclass MyApp extends StatelessWidget {[m
+         ChangeNotifierProvider([m
+           create: (_) => LandingUtils(),[m
+         ),[m
+[32m+[m[32m        ChangeNotifierProvider([m
+[32m+[m[32m          create: (_) => HomepageHelpers(),[m
+[32m+[m[32m        ),[m
+       ],[m
+     );[m
+   }[m
+[1mdiff --git a/lib/screens/Profile/profilescreen.dart b/lib/screens/Profile/profilescreen.dart[m
+[1mnew file mode 100644[m
+[1mindex 0000000..9f469f7[m
+[1m--- /dev/null[m
+[1m+++ b/lib/screens/Profile/profilescreen.dart[m
+[36m@@ -0,0 +1,12 @@[m
+[32m+[m[32mimport 'package:flutter/material.dart';[m
+[32m+[m
+[32m+[m[32mclass ProfileScreen extends StatelessWidget {[m
+[32m+[m[32m  const ProfileScreen({Key? key}) : super(key: key);[m
+[32m+[m
+[32m+[m[32m  @override[m
+[32m+[m[32m  Widget build(BuildContext context) {[m
+[32m+[m[32m    return Scaffold([m
+[32m+[m[32m      appBar: AppBar(),[m
+[32m+[m[32m    );[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[1mdiff --git a/lib/screens/chatroom/chatroom.dart b/lib/screens/chatroom/chatroom.dart[m
+[1mnew file mode 100644[m
+[1mindex 0000000..21efc6d[m
+[1m--- /dev/null[m
+[1m+++ b/lib/screens/chatroom/chatroom.dart[m
+[36m@@ -0,0 +1,10 @@[m
+[32m+[m[32mimport 'package:flutter/material.dart';[m
+[32m+[m
+[32m+[m[32mclass Chatroom extends StatelessWidget {[m
+[32m+[m[32m  const Chatroom({Key? key}) : super(key: key);[m
+[32m+[m
+[32m+[m[32m  @override[m
+[32m+[m[32m  Widget build(BuildContext context) {[m
+[32m+[m[32m    return Scaffold();[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[1mdiff --git a/lib/screens/feed/feed.dart b/lib/screens/feed/feed.dart[m
+[1mnew file mode 100644[m
+[1mindex 0000000..113f0f6[m
+[1m--- /dev/null[m
+[1m+++ b/lib/screens/feed/feed.dart[m
+[36m@@ -0,0 +1,10 @@[m
+[32m+[m[32mimport 'package:flutter/material.dart';[m
+[32m+[m
+[32m+[m[32mclass Feed extends StatelessWidget {[m
+[32m+[m[32m  const Feed({Key? key}) : super(key: key);[m
+[32m+[m
+[32m+[m[32m  @override[m
+[32m+[m[32m  Widget build(BuildContext context) {[m
+[32m+[m[32m    return Scaffold();[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[1mdiff --git a/lib/screens/homepage/homepage.dart b/lib/screens/homepage/homepage.dart[m
+[1mindex 0f634a8..2bc17c5 100644[m
+[1m--- a/lib/screens/homepage/homepage.dart[m
+[1m+++ b/lib/screens/homepage/homepage.dart[m
+[36m@@ -1,4 +1,10 @@[m
+ import 'package:flutter/material.dart';[m
+[32m+[m[32mimport 'package:provider/provider.dart';[m
+[32m+[m[32mimport 'package:social_media_app/screens/Profile/profilescreen.dart';[m
+[32m+[m[32mimport 'package:social_media_app/screens/chatroom/chatroom.dart';[m
+[32m+[m[32mimport 'package:social_media_app/screens/feed/feed.dart';[m
+[32m+[m[32mimport 'package:social_media_app/screens/homepage/homepagehelpers.dart';[m
+[32m+[m[32mimport 'package:social_media_app/services/firebaseoperations.dart';[m
+ [m
+ import '../../constraints.dart';[m
+ [m
+[36m@@ -12,16 +18,35 @@[m [mclass Homepage extends StatefulWidget {[m
+ class _HomepageState extends State<Homepage> {[m
+   ConstantColors constantColors = ConstantColors();[m
+   final PageController homepageController = PageController();[m
+[32m+[m[32m  int pageindex = 0;[m
+[32m+[m
+[32m+[m[32m  @override[m
+[32m+[m[32m  void initState() {[m
+[32m+[m[32m    Provider.of<FirebaseOperation>(context, listen: false)[m
+[32m+[m[32m        .initUserData(context);[m
+[32m+[m[32m    super.initState();[m
+[32m+[m[32m  }[m
+[32m+[m
+   @override[m
+   Widget build(BuildContext context) {[m
+     return Scaffold([m
+       backgroundColor: kContentColorLightTheme,[m
+[31m-      body: Center([m
+[31m-        child: Text([m
+[31m-          "Home Page",[m
+[31m-          style: TextStyle(fontSize: 20, color: Colors.white),[m
+[31m-        ),[m
+[32m+[m[32m      body: PageView([m
+[32m+[m[32m        controller: homepageController,[m
+[32m+[m[32m        children: [[m
+[32m+[m[32m          Feed(),[m
+[32m+[m[32m          Chatroom(),[m
+[32m+[m[32m          ProfileScreen(),[m
+[32m+[m[32m        ],[m
+[32m+[m[32m        physics: NeverScrollableScrollPhysics(),[m
+[32m+[m[32m        onPageChanged: (page) {[m
+[32m+[m[32m          setState(() {[m
+[32m+[m[32m            pageindex = page;[m
+[32m+[m[32m          });[m
+[32m+[m[32m        },[m
+       ),[m
+[32m+[m[32m      bottomNavigationBar: Provider.of<HomepageHelpers>(context, listen: false)[m
+[32m+[m[32m          .bottomNavBar(pageindex, homepageController, context),[m
+     );[m
+   }[m
+ }[m
+[1mdiff --git a/lib/screens/homepage/homepagehelpers.dart b/lib/screens/homepage/homepagehelpers.dart[m
+[1mnew file mode 100644[m
+[1mindex 0000000..6d8c158[m
+[1m--- /dev/null[m
+[1m+++ b/lib/screens/homepage/homepagehelpers.dart[m
+[36m@@ -0,0 +1,41 @@[m
+[32m+[m[32mimport 'package:eva_icons_flutter/eva_icons_flutter.dart';[m
+[32m+[m[32mimport 'package:flutter/material.dart';[m
+[32m+[m[32mimport 'package:custom_navigation_bar/custom_navigation_bar.dart';[m
+[32m+[m[32mimport 'package:provider/provider.dart';[m
+[32m+[m[32mimport 'package:social_media_app/constraints.dart';[m
+[32m+[m[32mimport 'package:social_media_app/services/firebaseoperations.dart';[m
+[32m+[m
+[32m+[m[32mclass HomepageHelpers extends ChangeNotifier {[m
+[32m+[m[32m  ConstantColors constantColors = ConstantColors();[m
+[32m+[m[32m  Widget bottomNavBar([m
+[32m+[m[32m      int index, PageController controller, BuildContext context) {[m
+[32m+[m[32m    return CustomNavigationBar([m
+[32m+[m[32m      currentIndex: index,[m
+[32m+[m[32m      bubbleCurve: Curves.bounceIn,[m
+[32m+[m[32m      scaleCurve: Curves.decelerate,[m
+[32m+[m[32m      selectedColor: constantColors.blueColor,[m
+[32m+[m[32m      unSelectedColor: constantColors.whiteColor,[m
+[32m+[m[32m      strokeColor: constantColors.blueColor,[m
+[32m+[m[32m      scaleFactor: 0.5,[m
+[32m+[m[32m      iconSize: 30,[m
+[32m+[m[32m      onTap: (value) {[m
+[32m+[m[32m        index = value;[m
+[32m+[m[32m        controller.jumpToPage(value);[m
+[32m+[m[32m        notifyListeners();[m
+[32m+[m[32m      },[m
+[32m+[m[32m      backgroundColor: Color(0xff040307),[m
+[32m+[m[32m      items: [[m
+[32m+[m[32m        CustomNavigationBarItem(icon: Icon(EvaIcons.home)),[m
+[32m+[m[32m        CustomNavigationBarItem(icon: Icon(Icons.message_outlined)),[m
+[32m+[m[32m        CustomNavigationBarItem([m
+[32m+[m[32m            icon: CircleAvatar([m
+[32m+[m[32m          radius: 35.0,[m
+[32m+[m[32m          backgroundColor: constantColors.blueGreyColor,[m
+[32m+[m[32m          backgroundImage: NetworkImage([m
+[32m+[m[32m              Provider.of<FirebaseOperation>(context, listen: false)[m
+[32m+[m[32m                  .initUserImage),[m
+[32m+[m[32m        )),[m
+[32m+[m[32m      ],[m
+[32m+[m[32m    );[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[1mdiff --git a/lib/services/firebaseoperations.dart b/lib/services/firebaseoperations.dart[m
+[1mindex 668de78..9b833e3 100644[m
+[1m--- a/lib/services/firebaseoperations.dart[m
+[1m+++ b/lib/services/firebaseoperations.dart[m
+[36m@@ -9,6 +9,7 @@[m [mimport 'package:social_media_app/services/authentication.dart';[m
+ [m
+ class FirebaseOperation extends ChangeNotifier {[m
+   late UploadTask ImageUploadTask;[m
+[32m+[m[32m  late String initUserEmail, initUserName, initUserImage;[m
+ [m
+   Future uploadUserImage(BuildContext context) async {[m
+     Reference imageReference = FirebaseStorage.instance.ref().child([m
+[36m@@ -33,4 +34,21 @@[m [mclass FirebaseOperation extends ChangeNotifier {[m
+         .doc(Provider.of<Authentication>(context, listen: false).getUserId)[m
+         .set(data);[m
+   }[m
+[32m+[m
+[32m+[m[32m  Future initUserData<DocumentSnapshot>(BuildContext context) async {[m
+[32m+[m[32m    return await FirebaseFirestore.instance[m
+[32m+[m[32m        .collection("allusers")[m
+[32m+[m[32m        .doc(Provider.of<Authentication>(context, listen: false).getUserId)[m
+[32m+[m[32m        .get()[m
+[32m+[m[32m        .then((doc) async {[m
+[32m+[m[32m      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;[m
+[32m+[m[32m      print("Fetching User Data ");[m
+[32m+[m[32m      initUserName = data['username'];[m
+[32m+[m[32m      initUserEmail = data['useremail'];[m
+[32m+[m[32m      initUserImage = data['userimage'];[m
+[32m+[m[32m      print(initUserName);[m
+[32m+[m[32m      print(initUserImage);[m
+[32m+[m[32m      notifyListeners();[m
+[32m+[m[32m    });[m
+[32m+[m[32m  }[m
+ }[m
+[1mdiff --git a/pubspec.lock b/pubspec.lock[m
+[1mindex 3dc400d..40ef25c 100644[m
+[1m--- a/pubspec.lock[m
+[1m+++ b/pubspec.lock[m
+[36m@@ -78,6 +78,13 @@[m [mpackages:[m
+       url: "https://pub.dartlang.org"[m
+     source: hosted[m
+     version: "1.0.3"[m
+[32m+[m[32m  custom_navigation_bar:[m
+[32m+[m[32m    dependency: "direct main"[m
+[32m+[m[32m    description:[m
+[32m+[m[32m      name: custom_navigation_bar[m
+[32m+[m[32m      url: "https://pub.dartlang.org"[m
+[32m+[m[32m    source: hosted[m
+[32m+[m[32m    version: "0.8.2"[m
+   eva_icons_flutter:[m
+     dependency: "direct main"[m
+     description:[m
+[1mdiff --git a/pubspec.yaml b/pubspec.yaml[m
+[1mindex a4a66fe..ef2acf0 100644[m
+[1m--- a/pubspec.yaml[m
+[1m+++ b/pubspec.yaml[m
+[36m@@ -38,6 +38,7 @@[m [mdependencies:[m
+   firebase_storage: ^10.0.0[m
+   cloud_firestore: ^2.4.0[m
+   image_picker: ^0.8.2[m
+[32m+[m[32m  custom_navigation_bar: ^0.8.2[m
+ [m
+ [m
+ [m

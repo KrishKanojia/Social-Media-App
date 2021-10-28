@@ -38,6 +38,7 @@ dependencies:
   firebase_storage: ^10.0.0
   cloud_firestore: ^2.4.0
   image_picker: ^0.8.2
+  custom_navigation_bar: ^0.8.2
 
 
 
