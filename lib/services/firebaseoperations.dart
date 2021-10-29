@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,8 @@ import 'package:social_media_app/services/authentication.dart';
 
 class FirebaseOperation extends ChangeNotifier {
   late UploadTask ImageUploadTask;
-  late String initUserEmail, initUserName, initUserImage;
+  late String initUserEmail, initUserName;
+  String initUserImage = "";
 
   Future uploadUserImage(BuildContext context) async {
     Reference imageReference = FirebaseStorage.instance.ref().child(
@@ -35,20 +35,41 @@ class FirebaseOperation extends ChangeNotifier {
         .set(data);
   }
 
-  Future initUserData<DocumentSnapshot>(BuildContext context) async {
-    return await FirebaseFirestore.instance
-        .collection("allusers")
-        .doc(Provider.of<Authentication>(context, listen: false).getUserId)
-        .get()
-        .then((doc) async {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-      print("Fetching User Data ");
-      initUserName = data['username'];
-      initUserEmail = data['useremail'];
-      initUserImage = data['userimage'];
-      print(initUserName);
-      print(initUserImage);
-      notifyListeners();
-    });
+  Future initUserData(BuildContext context) async {
+    return
+        // StreamBuilder<DocumentSnapshot>(
+        //     stream: FirebaseFirestore.instance
+        //         .collection('allusers')
+        //         .d(Provider.of<Authentication>(context, listen: false).getUserId,)
+        //         .snapshots(),
+        //     builder:
+        //         (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        //       if (snapshot.hasData) {
+        //         _currentName = snapshot.data['name'];
+        //         return Text(snapshot.data['name']);
+        //       }
+        //       //this will load first
+        //       return CircularProgressIndicator();
+        //     });
+        //
+        FirebaseFirestore.instance
+            .collection("allusers")
+            .doc(
+              Provider.of<Authentication>(context, listen: false).getUserId,
+            )
+            .get()
+            .then(
+      (doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        print("Fetching User Data ");
+
+        initUserName = data['username'];
+        initUserEmail = data['useremail'];
+        initUserImage = data['userimage'];
+        print(initUserName);
+        print(initUserImage);
+        notifyListeners();
+      },
+    );
   }
 }

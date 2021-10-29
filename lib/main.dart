@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:social_media_app/screens/Profile/profilehelpers.dart';
+import 'package:social_media_app/screens/feed/feedhelpers.dart';
 import 'package:social_media_app/screens/homepage/homepagehelpers.dart';
 import 'package:social_media_app/screens/landingpage/landinghelpers.dart';
 import 'package:social_media_app/screens/landingpage/landingpage.dart';
@@ -53,6 +55,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => HomepageHelpers(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ProfileHelpers(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FeedHelpers(),
         ),
       ],
     );

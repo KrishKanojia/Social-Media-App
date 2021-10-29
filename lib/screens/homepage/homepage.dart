@@ -15,11 +15,13 @@ class Homepage extends StatefulWidget {
   _HomepageState createState() => _HomepageState();
 }
 
+late FirebaseOperation firebaseOperation;
+
 class _HomepageState extends State<Homepage> {
   ConstantColors constantColors = ConstantColors();
   final PageController homepageController = PageController();
   int pageindex = 0;
-
+  String imgNm = "";
   @override
   void initState() {
     Provider.of<FirebaseOperation>(context, listen: false)
