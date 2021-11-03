@@ -12,6 +12,8 @@ import 'package:social_media_app/screens/landingpage/landingutils.dart';
 import 'package:social_media_app/screens/splashscreen/splashscreen.dart';
 import 'package:social_media_app/services/authentication.dart';
 import 'package:social_media_app/services/firebaseoperations.dart';
+import 'package:social_media_app/utils/postoptions.dart';
+import 'package:social_media_app/utils/uploadpost.dart';
 
 import 'constraints.dart';
 
@@ -61,6 +63,12 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => FeedHelpers(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => UploadPost(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => PostFunctions(),
         ),
       ],
     );

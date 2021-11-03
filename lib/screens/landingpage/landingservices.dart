@@ -115,6 +115,7 @@ class LandingServices extends ChangeNotifier {
                       documentSnapshot.data() as Map<String, dynamic>;
                   return ListTile(
                     leading: CircleAvatar(
+                      backgroundColor: Colors.transparent,
                       backgroundImage: NetworkImage(
                         data["userimage"],
                       ),
@@ -130,9 +131,46 @@ class LandingServices extends ChangeNotifier {
                       style: TextStyle(
                           color: constantColors.whiteColor, fontSize: 12),
                     ),
-                    trailing: Icon(
-                      FontAwesomeIcons.trashAlt,
-                      color: constantColors.redColor,
+                    trailing: Container(
+                      // color: Colors.red,
+                      width: 120,
+                      height: 50,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          IconButton(
+                            icon: Icon(
+                              FontAwesomeIcons.check,
+                              color: constantColors.blueColor,
+                            ),
+                            onPressed: () {
+                              Provider.of<Authentication>(context,
+                                      listen: false)
+                                  .signIntoAccount(
+                                      email: data["useremail"],
+                                      password: data["userpassword"])
+                                  .whenComplete(() {
+                                Navigator.of(context).pushReplacement(
+                                  PageTransition(
+                                      child: Homepage(),
+                                      type: PageTransitionType.leftToRight),
+                                );
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(
+                              FontAwesomeIcons.trashAlt,
+                              color: constantColors.redColor,
+                            ),
+                            onPressed: () {
+                              Provider.of<FirebaseOperation>(context,
+                                      listen: false)
+                                  .deleteUserUid(data["useruid"]);
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }).toList(),
@@ -253,6 +291,7 @@ class LandingServices extends ChangeNotifier {
                             Provider.of<FirebaseOperation>(context,
                                     listen: false)
                                 .createUserCollection(context, {
+                              'userpassword': userPasswordController.text,
                               'useruid': Provider.of<Authentication>(context,
                                       listen: false)
                                   .getUserId,

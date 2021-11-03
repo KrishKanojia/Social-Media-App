@@ -20,7 +20,7 @@ class ProfileHelpers extends ChangeNotifier {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Container(
-            color: Colors.green,
+            // color: Colors.green,
             width: 180,
             height: 200,
             child: Column(
@@ -63,7 +63,7 @@ class ProfileHelpers extends ChangeNotifier {
             ),
           ),
           Container(
-            color: Colors.blue,
+            // color: Colors.blue,
             width: 180,
             height: 200,
             child: Column(

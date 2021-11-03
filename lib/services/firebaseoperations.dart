@@ -9,7 +9,8 @@ import 'package:social_media_app/services/authentication.dart';
 class FirebaseOperation extends ChangeNotifier {
   late UploadTask ImageUploadTask;
   late String initUserEmail, initUserName;
-  String initUserImage = "";
+  String initUserImage =
+      "https://toppng.com/uploads/preview/clear-png-11553956476xuvdl9amaq.png";
 
   Future uploadUserImage(BuildContext context) async {
     Reference imageReference = FirebaseStorage.instance.ref().child(
@@ -71,5 +72,16 @@ class FirebaseOperation extends ChangeNotifier {
         notifyListeners();
       },
     );
+  }
+
+  Future uploadPostData(String postid, dynamic data) {
+    return FirebaseFirestore.instance.collection("posts").doc(postid).set(data);
+  }
+
+  Future deleteUserUid(String userId) async {
+    return FirebaseFirestore.instance
+        .collection("allusers")
+        .doc(userId)
+        .delete();
   }
 }
