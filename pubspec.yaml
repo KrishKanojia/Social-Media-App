@@ -40,6 +40,8 @@ dependencies:
   image_picker: ^0.8.2
   custom_navigation_bar: ^0.8.2
   lottie: ^1.1.0
+  timeago: ^3.1.0
+
 
 
 

@@ -78,10 +78,18 @@ class FirebaseOperation extends ChangeNotifier {
     return FirebaseFirestore.instance.collection("posts").doc(postid).set(data);
   }
 
-  Future deleteUserUid(String userId) async {
+  Future deleteUserData(String userId, dynamic collection) async {
     return FirebaseFirestore.instance
-        .collection("allusers")
+        .collection(collection)
         .doc(userId)
         .delete();
+  }
+
+  Future addReward(String postId, dynamic data) async {
+    return FirebaseFirestore.instance
+        .collection("posts")
+        .doc(postId)
+        .collection("rewards")
+        .add(data);
   }
 }

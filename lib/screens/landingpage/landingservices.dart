@@ -166,7 +166,7 @@ class LandingServices extends ChangeNotifier {
                             onPressed: () {
                               Provider.of<FirebaseOperation>(context,
                                       listen: false)
-                                  .deleteUserUid(data["useruid"]);
+                                  .deleteUserData(data["useruid"], 'allusers');
                             },
                           ),
                         ],

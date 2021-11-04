@@ -70,8 +70,10 @@ class FeedHelpers extends ChangeNotifier {
             ),
           ),
           child: StreamBuilder<QuerySnapshot>(
-              stream:
-                  FirebaseFirestore.instance.collection("posts").snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection("posts")
+                  .orderBy("time", descending: true)
+                  .snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
@@ -94,7 +96,8 @@ class FeedHelpers extends ChangeNotifier {
     return ListView(
         children: snapshot.data!.docs.map((DocumentSnapshot document) {
       Map<String, dynamic> data = document.data()! as Map<String, dynamic>;
-
+      Provider.of<PostFunctions>(context, listen: false)
+          .showTimeAgo(data["time"]);
       return Container(
         height: MediaQuery.of(context).size.height * 0.65,
         width: MediaQuery.of(context).size.width,
@@ -144,7 +147,8 @@ class FeedHelpers extends ChangeNotifier {
                                 ),
                                 children: [
                                   TextSpan(
-                                      text: " , 12 hours ago",
+                                      text:
+                                          " , ${Provider.of<PostFunctions>(context, listen: false).getimageTimePosted}",
                                       style: TextStyle(
                                         color: constantColors.lightColor
                                             .withOpacity(0.8),
@@ -156,6 +160,46 @@ class FeedHelpers extends ChangeNotifier {
                         ],
                       ),
                     ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width * 0.2,
+                    height: MediaQuery.of(context).size.width * 0.1,
+                    // color: constantColors.redColor,
+                    child: StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("posts")
+                            .doc(data["caption"])
+                            .collection("rewards")
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<QuerySnapshot> snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return ListView(
+                              scrollDirection: Axis.horizontal,
+                              children: snapshot.data!.docs.map(
+                                (DocumentSnapshot documentSnapshot) {
+                                  Map<String, dynamic> awardData =
+                                      documentSnapshot.data()!
+                                          as Map<String, dynamic>;
+
+                                  return Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: Container(
+                                      height: 30,
+                                      width: 30,
+                                      child: Image.network(awardData["award"]),
+                                    ),
+                                  );
+                                },
+                              ).toList(),
+                            );
+                          }
+                        }),
                   )
                 ],
               ),
@@ -191,7 +235,7 @@ class FeedHelpers extends ChangeNotifier {
                           ),
                           onLongPress: () {
                             Provider.of<PostFunctions>(context, listen: false)
-                                .showLikes(context);
+                                .showLikes(context, data["caption"]);
                           },
                           onTap: () {
                             print("Adding Like...");
@@ -256,13 +300,31 @@ class FeedHelpers extends ChangeNotifier {
                         SizedBox(
                           width: 5,
                         ),
-                        Text(
-                          "0",
-                          style: TextStyle(
-                            color: constantColors.whiteColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection("posts")
+                              .doc(data["caption"])
+                              .collection("comments")
+                              .snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else {
+                              return Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  snapshot.data!.docs.length.toString(),
+                                  style: TextStyle(
+                                    color: constantColors.whiteColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -278,17 +340,42 @@ class FeedHelpers extends ChangeNotifier {
                             color: constantColors.yellowColor,
                             size: 22.0,
                           ),
+                          onTap: () {
+                            Provider.of<PostFunctions>(context, listen: false)
+                                .showReward(
+                              context,
+                              data["caption"],
+                            );
+                          },
                         ),
                         SizedBox(
                           width: 5,
                         ),
-                        Text(
-                          "0",
-                          style: TextStyle(
-                            color: constantColors.whiteColor,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                        StreamBuilder<QuerySnapshot>(
+                          stream: FirebaseFirestore.instance
+                              .collection("posts")
+                              .doc(data["caption"])
+                              .collection("rewards")
+                              .snapshots(),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            } else {
+                              return Padding(
+                                padding: EdgeInsets.only(left: 8.0),
+                                child: Text(
+                                  snapshot.data!.docs.length.toString(),
+                                  style: TextStyle(
+                                    color: constantColors.whiteColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ],
                     ),
@@ -302,7 +389,10 @@ class FeedHelpers extends ChangeNotifier {
                             EvaIcons.moreVertical,
                             color: constantColors.whiteColor,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            Provider.of<PostFunctions>(context, listen: false)
+                                .showPostOption(context, data["caption"]);
+                          },
                         )
                       : Container(
                           height: 0,
