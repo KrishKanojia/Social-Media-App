@@ -92,4 +92,11 @@ class FirebaseOperation extends ChangeNotifier {
         .collection("rewards")
         .add(data);
   }
+
+  Future updatedCaption(String postId, dynamic data) async {
+    return FirebaseFirestore.instance
+        .collection("posts")
+        .doc(postId)
+        .update(data);
+  }
 }

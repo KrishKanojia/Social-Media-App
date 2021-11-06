@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/screens/Profile/profilehelpers.dart';
+import 'package:social_media_app/screens/altprofile/alt_profile_helpers.dart';
 import 'package:social_media_app/screens/feed/feedhelpers.dart';
 import 'package:social_media_app/screens/homepage/homepagehelpers.dart';
 import 'package:social_media_app/screens/landingpage/landinghelpers.dart';
@@ -69,6 +70,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => PostFunctions(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => AltProfileHelpers(),
         ),
       ],
     );

@@ -5,8 +5,10 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lottie/lottie.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/constraints.dart';
+import 'package:social_media_app/screens/altprofile/alt_profile.dart';
 import 'package:social_media_app/services/authentication.dart';
 import 'package:social_media_app/utils/postoptions.dart';
 import 'package:social_media_app/utils/uploadpost.dart';
@@ -117,6 +119,19 @@ class FeedHelpers extends ChangeNotifier {
                       backgroundColor: constantColors.transperant,
                       backgroundImage: NetworkImage(data["userimage"]),
                     ),
+                    onTap: () {
+                      if (data["useruid"] !=
+                          Provider.of<Authentication>(context, listen: false)
+                              .getUserId) {
+                        Navigator.of(context).pushReplacement(
+                          PageTransition(
+                              child: AltProfile(
+                                useruid: data["useruid"],
+                              ),
+                              type: PageTransitionType.bottomToTop),
+                        );
+                      }
+                    },
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 8.0),

@@ -150,7 +150,8 @@ class LandingServices extends ChangeNotifier {
                                       email: data["useremail"],
                                       password: data["userpassword"])
                                   .whenComplete(() {
-                                Navigator.of(context).pushReplacement(
+                                Navigator.pushReplacement(
+                                  context,
                                   PageTransition(
                                       child: Homepage(),
                                       type: PageTransitionType.leftToRight),
