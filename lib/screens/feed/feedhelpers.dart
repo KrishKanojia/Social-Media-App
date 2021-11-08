@@ -355,6 +355,13 @@ class FeedHelpers extends ChangeNotifier {
                             color: constantColors.yellowColor,
                             size: 22.0,
                           ),
+                          onLongPress: () {
+                            Provider.of<PostFunctions>(context, listen: false)
+                                .showRewardSheet(
+                              context,
+                              data["caption"],
+                            );
+                          },
                           onTap: () {
                             Provider.of<PostFunctions>(context, listen: false)
                                 .showReward(

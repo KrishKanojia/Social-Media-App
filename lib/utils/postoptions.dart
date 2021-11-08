@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/constraints.dart';
+import 'package:social_media_app/screens/altprofile/alt_profile.dart';
 import 'package:social_media_app/services/authentication.dart';
 import 'package:social_media_app/services/firebaseoperations.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -232,6 +234,141 @@ class PostFunctions extends ChangeNotifier {
     });
   }
 
+  showRewardSheet(BuildContext context, String postId) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.75,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: constantColors.blueGreyColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 150.0),
+                    child: Divider(
+                      thickness: 4.0,
+                      color: constantColors.whiteColor,
+                    ),
+                  ),
+                  Container(
+                    width: 100,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: constantColors.whiteColor),
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "Rewards",
+                        style: TextStyle(
+                          color: constantColors.blueColor,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("posts")
+                          .doc(postId)
+                          .collection("rewards")
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else {
+                          return ListView(
+                            children: snapshot.data!.docs
+                                .map((DocumentSnapshot documentSnapshot) {
+                              Map<String, dynamic> docdata = documentSnapshot
+                                  .data() as Map<String, dynamic>;
+                              return ListTile(
+                                title: Text(
+                                  docdata["username"],
+                                  style: TextStyle(
+                                    color: constantColors.blueColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                                leading: GestureDetector(
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                      docdata["userimage"],
+                                    ),
+                                    backgroundColor:
+                                        constantColors.blueGreyColor,
+                                    radius: 15.0,
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pushReplacement(
+                                      PageTransition(
+                                        child: AltProfile(
+                                          useruid: docdata["useruid"],
+                                        ),
+                                        type: PageTransitionType.bottomToTop,
+                                      ),
+                                    );
+                                  },
+                                ),
+                                subtitle: Text(
+                                  docdata["useremail"],
+                                  style: TextStyle(
+                                    color: constantColors.whiteColor,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.0,
+                                  ),
+                                ),
+                                trailing: Provider.of<Authentication>(context,
+                                                listen: false)
+                                            .getUserId ==
+                                        docdata["useruid"]
+                                    ? Container(
+                                        width: 0.0,
+                                        height: 0.0,
+                                      )
+                                    : MaterialButton(
+                                        color: constantColors.blueColor,
+                                        child: Text(
+                                          "Follow",
+                                          style: TextStyle(
+                                            color: constantColors.whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14.0,
+                                          ),
+                                        ),
+                                        onPressed: () {},
+                                      ),
+                              );
+                            }).toList(),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+  }
+
   showCommentSheet(
       BuildContext context, DocumentSnapshot documentSnapshot, String docId) {
     return showModalBottomSheet(
@@ -324,6 +461,19 @@ class PostFunctions extends ChangeNotifier {
                                                   backgroundImage: NetworkImage(
                                                       data["userimage"]),
                                                 ),
+                                                onTap: () {
+                                                  Navigator.of(context)
+                                                      .pushReplacement(
+                                                    PageTransition(
+                                                      child: AltProfile(
+                                                        useruid:
+                                                            data["useruid"],
+                                                      ),
+                                                      type: PageTransitionType
+                                                          .bottomToTop,
+                                                    ),
+                                                  );
+                                                },
                                               ),
                                             ),
                                             Padding(
@@ -550,9 +700,21 @@ class PostFunctions extends ChangeNotifier {
                                 as Map<String, dynamic>;
                             return GestureDetector(
                               child: ListTile(
-                                leading: CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(data["userimage"]),
+                                leading: GestureDetector(
+                                  child: CircleAvatar(
+                                    backgroundImage:
+                                        NetworkImage(data["userimage"]),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(context).pushReplacement(
+                                      PageTransition(
+                                        child: AltProfile(
+                                          useruid: data["useruid"],
+                                        ),
+                                        type: PageTransitionType.bottomToTop,
+                                      ),
+                                    );
+                                  },
                                 ),
                                 title: Text(
                                   data["username"],
@@ -684,6 +846,10 @@ class PostFunctions extends ChangeNotifier {
                                           context,
                                           listen: false)
                                       .initUserName,
+                                  "userimage": Provider.of<FirebaseOperation>(
+                                          context,
+                                          listen: false)
+                                      .initUserImage,
                                   "useremail": Provider.of<FirebaseOperation>(
                                           context,
                                           listen: false)
