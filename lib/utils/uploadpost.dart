@@ -5,10 +5,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/constraints.dart';
+import 'package:social_media_app/screens/homepage/homepage.dart';
 import 'package:social_media_app/services/authentication.dart';
 import 'package:social_media_app/services/firebaseoperations.dart';
 
@@ -317,8 +318,35 @@ class UploadPost extends ChangeNotifier {
                     "useremail":
                         Provider.of<FirebaseOperation>(context, listen: false)
                             .initUserEmail,
+                  }).whenComplete(() async
+                          // Add Data Under User Profile
+                          {
+                    await FirebaseFirestore.instance
+                        .collection("allusers")
+                        .doc(Provider.of<Authentication>(context, listen: false)
+                            .getUserId)
+                        .collection("posts")
+                        .add({
+                      "caption": captionController.text,
+                      "postimage": getuploadPostImageUrl,
+                      "username":
+                          Provider.of<FirebaseOperation>(context, listen: false)
+                              .initUserName,
+                      "userimage":
+                          Provider.of<FirebaseOperation>(context, listen: false)
+                              .initUserImage,
+                      "useruid":
+                          Provider.of<Authentication>(context, listen: false)
+                              .getUserId,
+                      "time": Timestamp.now(),
+                      "useremail":
+                          Provider.of<FirebaseOperation>(context, listen: false)
+                              .initUserEmail,
+                    });
                   }).whenComplete(() {
-                    Navigator.pop(context);
+                    Navigator.of(context).pushReplacement(PageTransition(
+                        child: Homepage(),
+                        type: PageTransitionType.leftToRight));
                   });
                 },
               )
