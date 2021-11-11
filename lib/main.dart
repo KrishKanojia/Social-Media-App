@@ -7,7 +7,6 @@ import 'package:social_media_app/screens/altprofile/alt_profile_helpers.dart';
 import 'package:social_media_app/screens/feed/feedhelpers.dart';
 import 'package:social_media_app/screens/homepage/homepagehelpers.dart';
 import 'package:social_media_app/screens/landingpage/landinghelpers.dart';
-import 'package:social_media_app/screens/landingpage/landingpage.dart';
 import 'package:social_media_app/screens/landingpage/landingservices.dart';
 import 'package:social_media_app/screens/landingpage/landingutils.dart';
 import 'package:social_media_app/screens/splashscreen/splashscreen.dart';
@@ -17,6 +16,7 @@ import 'package:social_media_app/utils/postoptions.dart';
 import 'package:social_media_app/utils/uploadpost.dart';
 
 import 'constraints.dart';
+import 'screens/chatroom/chatroomhelpers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,6 +73,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => AltProfileHelpers(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ChatroomHelpers(),
         ),
       ],
     );

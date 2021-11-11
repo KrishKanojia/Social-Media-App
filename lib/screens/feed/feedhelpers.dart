@@ -18,7 +18,7 @@ class FeedHelpers extends ChangeNotifier {
 
   appBar(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: constantColors.darkColor.withOpacity(0.6),
       centerTitle: true,
       title: RichText(
         text: TextSpan(

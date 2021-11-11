@@ -123,4 +123,11 @@ class FirebaseOperation extends ChangeNotifier {
           .set(followerData);
     });
   }
+
+  Future submitChatroomData(String chatroomName, dynamic chatroomData) async {
+    return FirebaseFirestore.instance
+        .collection("chatroom")
+        .doc(chatroomName)
+        .set(chatroomData);
+  }
 }
