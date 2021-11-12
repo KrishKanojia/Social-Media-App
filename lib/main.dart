@@ -9,6 +9,7 @@ import 'package:social_media_app/screens/homepage/homepagehelpers.dart';
 import 'package:social_media_app/screens/landingpage/landinghelpers.dart';
 import 'package:social_media_app/screens/landingpage/landingservices.dart';
 import 'package:social_media_app/screens/landingpage/landingutils.dart';
+import 'package:social_media_app/screens/messaging/groupmessagehelpers.dart';
 import 'package:social_media_app/screens/splashscreen/splashscreen.dart';
 import 'package:social_media_app/services/authentication.dart';
 import 'package:social_media_app/services/firebaseoperations.dart';
@@ -76,6 +77,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => ChatroomHelpers(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => GroupMessageHelpers(),
         ),
       ],
     );

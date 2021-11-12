@@ -10,7 +10,9 @@ class Chatroom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: constantColors.darkColor,
         appBar: AppBar(
+          brightness: Brightness.dark,
           backgroundColor: constantColors.darkColor.withOpacity(0.6),
           centerTitle: true,
           title: RichText(
