@@ -7,6 +7,7 @@ import 'package:lottie/lottie.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:social_media_app/constraints.dart';
+import 'package:social_media_app/screens/altprofile/alt_profile.dart';
 import 'package:social_media_app/screens/messaging/groupmessage.dart';
 import 'package:social_media_app/services/authentication.dart';
 import 'package:social_media_app/services/firebaseoperations.dart';
@@ -68,6 +69,50 @@ class ChatroomHelpers extends ChangeNotifier {
                   height: MediaQuery.of(context).size.height * 0.08,
                   width: MediaQuery.of(context).size.width,
                   // color: constantColors.redColor,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: StreamBuilder<QuerySnapshot>(
+                      stream: FirebaseFirestore.instance
+                          .collection("chatroom")
+                          .doc(documentSnapshot.id)
+                          .collection("members")
+                          .snapshots(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else {
+                          return ListView(
+                            scrollDirection: Axis.horizontal,
+                            children: snapshot.data!.docs
+                                .map((DocumentSnapshot documentSnapshot) {
+                              Map<String, dynamic> data = documentSnapshot
+                                  .data()! as Map<String, dynamic>;
+                              return GestureDetector(
+                                child: CircleAvatar(
+                                  backgroundColor: constantColors.darkColor,
+                                  radius: 25.0,
+                                  backgroundImage:
+                                      NetworkImage(data["userimage"]),
+                                ),
+                                onTap: () {
+                                  if (Provider.of<Authentication>(context,
+                                              listen: false)
+                                          .getUserId !=
+                                      data["useruid"]) {
+                                    Navigator.of(context).pushReplacement(
+                                      PageTransition(
+                                          child: AltProfile(
+                                              useruid: data["useruid"]),
+                                          type: PageTransitionType.bottomToTop),
+                                    );
+                                  }
+                                },
+                              );
+                            }).toList(),
+                          );
+                        }
+                      }),
                 ),
                 Container(
                   decoration: BoxDecoration(

@@ -30,7 +30,7 @@ class FirebaseOperation extends ChangeNotifier {
   }
 
   Future createUserCollection(BuildContext context, dynamic data) async {
-    return FirebaseFirestore.instance
+    return await FirebaseFirestore.instance
         .collection("allusers")
         .doc(Provider.of<Authentication>(context, listen: false).getUserId)
         .set(data);

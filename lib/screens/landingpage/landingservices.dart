@@ -288,20 +288,20 @@ class LandingServices extends ChangeNotifier {
                                   email: userEmailController.text,
                                   password: userPasswordController.text)
                               .whenComplete(() {
-                            print("Creating Collection");
                             Provider.of<FirebaseOperation>(context,
                                     listen: false)
                                 .createUserCollection(context, {
-                              'userpassword': userPasswordController.text,
-                              'useruid': Provider.of<Authentication>(context,
+                              "userpassword": userPasswordController.text,
+                              "useruid": Provider.of<Authentication>(context,
                                       listen: false)
                                   .getUserId,
-                              'useremail': userEmailController.text,
-                              'username': userNameController.text,
-                              'userimage': Provider.of<LandingUtils>(context,
+                              "useremail": userEmailController.text,
+                              "username": userNameController.text,
+                              "userimage": Provider.of<LandingUtils>(context,
                                       listen: false)
                                   .UserImageUrl,
                             });
+                            print("Creating Collection");
                           }).whenComplete(() => Navigator.of(context)
                                   .pushReplacement(PageTransition(
                                       child: Homepage(),

@@ -73,6 +73,7 @@ class LandingUtils extends ChangeNotifier {
                               .whenComplete(() {
                             Provider.of<LandingServices>(context, listen: false)
                                 .showUserImage(context);
+                            print("Its Popping");
                             // Navigator.of(context).pop();
                           });
                         },
