@@ -173,6 +173,11 @@ class _GroupMessageState extends State<GroupMessage> {
                             "assets/welcome_image.png",
                           ),
                         ),
+                        onTap: () {
+                          Provider.of<GroupMessageHelpers>(context,
+                                  listen: false)
+                              .showSticker(context, widget.docSnapshot.id);
+                        },
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0, right: 8.0),

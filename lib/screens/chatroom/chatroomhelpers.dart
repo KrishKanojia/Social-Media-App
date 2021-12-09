@@ -347,13 +347,49 @@ class ChatroomHelpers extends ChangeNotifier {
                       fontSize: 16.0,
                     ),
                   ),
-                  subtitle: Text(
-                    "Last message",
-                    style: TextStyle(
-                      color: constantColors.greenColor,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                    ),
+                  subtitle: StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection("chatroom")
+                        .doc(documentSnapshot.id)
+                        .collection("messages")
+                        .orderBy("time", descending: true)
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshots) {
+                      Map<String, dynamic> data = snapshots.data!.docs.first
+                          .data() as Map<String, dynamic>;
+                      if (snapshots.connectionState ==
+                          ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else if (data["username"] != null &&
+                          data["message"] != null) {
+                        return Text(
+                          "${data["username"]} : ${data["message"]}",
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: constantColors.greenColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      } else if (data["username"] != null &&
+                          data["sticker"] != null) {
+                        return Text(
+                          "${data["username"]} : Sticker",
+                          style: TextStyle(
+                            fontSize: 14.0,
+                            color: constantColors.greenColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      } else {
+                        return Container(
+                          width: 0.0,
+                          height: 0.0,
+                        );
+                      }
+                    },
                   ),
                   trailing: Text(
                     "2 hours ago",

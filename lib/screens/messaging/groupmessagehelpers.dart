@@ -7,11 +7,15 @@ import 'package:social_media_app/constraints.dart';
 import 'package:social_media_app/screens/homepage/homepage.dart';
 import 'package:social_media_app/services/authentication.dart';
 import 'package:social_media_app/services/firebaseoperations.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class GroupMessageHelpers extends ChangeNotifier {
   ConstantColors constantColors = ConstantColors();
   bool hasMemberJoined = false;
   bool get getHasMemBerJoined => hasMemberJoined;
+
+  late String lastMessageTime;
+  String get getLastMessageTime => lastMessageTime;
   showMessage(
       {required BuildContext context,
       required DocumentSnapshot documentSnapshot,
@@ -34,9 +38,12 @@ class GroupMessageHelpers extends ChangeNotifier {
               children: snasphot.data!.docs.map((DocumentSnapshot docSnapshot) {
                 Map<String, dynamic> data =
                     docSnapshot.data()! as Map<String, dynamic>;
+                showLastMessageTime(data["time"]);
                 return Container(
                   margin: EdgeInsets.only(top: 4.0),
-                  height: MediaQuery.of(context).size.height * 0.12,
+                  height: data["message"] != null
+                      ? MediaQuery.of(context).size.height * 0.12
+                      : MediaQuery.of(context).size.height * 0.2,
                   width: MediaQuery.of(context).size.width,
                   // color: Colors.red,
                   child: Stack(
@@ -49,10 +56,14 @@ class GroupMessageHelpers extends ChangeNotifier {
                               padding: EdgeInsets.only(top: 8.0),
                               child: Container(
                                 constraints: BoxConstraints(
-                                  maxHeight:
-                                      MediaQuery.of(context).size.height * 0.1,
-                                  maxWidth:
-                                      MediaQuery.of(context).size.width * 0.8,
+                                  maxHeight: data["message"] != null
+                                      ? MediaQuery.of(context).size.height *
+                                          0.12
+                                      : MediaQuery.of(context).size.height *
+                                          0.4,
+                                  maxWidth: data["message"] != null
+                                      ? MediaQuery.of(context).size.width * 0.8
+                                      : MediaQuery.of(context).size.width * 0.9,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Provider.of<Authentication>(context,
@@ -110,14 +121,33 @@ class GroupMessageHelpers extends ChangeNotifier {
                                           ],
                                         ),
                                       ),
-                                      Text(
-                                        data["message"],
-                                        style: TextStyle(
-                                          color: constantColors.whiteColor,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 14.0,
+                                      data["message"] != null
+                                          ? Text(
+                                              data["message"],
+                                              style: TextStyle(
+                                                color:
+                                                    constantColors.whiteColor,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14.0,
+                                              ),
+                                            )
+                                          : Container(
+                                              height: 90,
+                                              width: 100,
+                                              child: Image.network(
+                                                data["sticker"],
+                                              ),
+                                            ),
+                                      Container(
+                                        width: 80.0,
+                                        child: Text(
+                                          lastMessageTime,
+                                          style: TextStyle(
+                                            fontSize: 10.0,
+                                            color: constantColors.whiteColor,
+                                          ),
                                         ),
-                                      ),
+                                      )
                                     ],
                                   ),
                                 ),
@@ -299,5 +329,119 @@ class GroupMessageHelpers extends ChangeNotifier {
             ],
           );
         });
+  }
+
+  showSticker(BuildContext context, String chatroomId) {
+    return showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return AnimatedContainer(
+            duration: Duration(seconds: 1),
+            curve: Curves.easeIn,
+            height: MediaQuery.of(context).size.height * 0.5,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: constantColors.darkColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12),
+                topRight: Radius.circular(12),
+              ),
+            ),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 105.0),
+                  child: Divider(
+                    thickness: 4,
+                    color: constantColors.whiteColor,
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: [
+                      Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5.0),
+                          border: Border.all(color: constantColors.blueColor),
+                        ),
+                        child: Image.asset("assets/welcome_image.png"),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.35,
+                  width: MediaQuery.of(context).size.width,
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("stickers")
+                        .snapshots(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return GridView(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3,
+                          ),
+                          children: snapshot.data!.docs
+                              .map((DocumentSnapshot documentSnapshot) {
+                            Map<String, dynamic> data =
+                                documentSnapshot.data() as Map<String, dynamic>;
+
+                            return GestureDetector(
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                child: Image.network(
+                                  data["image"],
+                                ),
+                              ),
+                              onTap: () {
+                                sendSticker(context, data["image"], chatroomId);
+                              },
+                            );
+                          }).toList(),
+                        );
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+  }
+
+  sendSticker(
+      BuildContext context, String stickerImageUrl, String chatrommId) async {
+    await FirebaseFirestore.instance
+        .collection("chatroom")
+        .doc(chatrommId)
+        .collection("messages")
+        .add({
+      "sticker": stickerImageUrl,
+      "username":
+          Provider.of<FirebaseOperation>(context, listen: false).initUserName,
+      "userimage":
+          Provider.of<FirebaseOperation>(context, listen: false).initUserImage,
+      "time": Timestamp.now(),
+      "useruid": Provider.of<Authentication>(context, listen: false).getUserId,
+    });
+  }
+
+  showLastMessageTime(dynamic timeData) {
+    Timestamp time = timeData;
+    DateTime dateTime = time.toDate();
+    lastMessageTime = timeago.format(dateTime);
+    print(lastMessageTime);
   }
 }
